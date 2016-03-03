@@ -2,7 +2,6 @@ package PiQuestion;
 
 import com.sun.xml.internal.fastinfoset.util.StringArray;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -11,10 +10,11 @@ import java.util.*;
 public class Driver {
     public static void main(String[] args) {
         //f("123", 2);
-        ArrayList<String> temp = permutation("12345", "12345".length());
+        ArrayList<String> temp = permutation("1234+5");
         for(int i=0; i<temp.size(); i++){
             System.out.println(temp.get(i));
         }
+        //f("123+", 23);
     }
 
     public static Integer[] getDigits(int num) {
@@ -31,8 +31,12 @@ public class Driver {
     }
 
 
-    public static void f(String listNum, int target) {
+    public static void f(String listNum, int target) throws IllegalArgumentException {
 //        ArrayList<String> listSubstrings = getListSubstrings(listNum);
+
+        if(!isValidNumberedString(listNum)) {
+            throw new IllegalArgumentException();
+        }
 
         int val = Integer.parseInt(listNum);
         Integer[] digits = getDigits(val);
@@ -75,7 +79,7 @@ public class Driver {
     // Permutations should be made by ops being inserted in the str. opcount is str.length()-1
     // permutation first half and permutation second half. first half opcount + second half opcount = total opcount
 
-    public static ArrayList<String> permutation(String str, int iterations) {
+    public static ArrayList<String> permutation(String str) {
         int len = str.length();
         ArrayList<String> permutations = new ArrayList<String>();
 
@@ -92,7 +96,7 @@ public class Driver {
 
             int opID = 0;
 
-            while(charCount < iterations) {
+            while(charCount < len) {
                 for(int i=0; i < len; i++) {    //check that opID is not 5
                     sb.append(str.charAt(i));
 
@@ -108,21 +112,34 @@ public class Driver {
                 permutations.add(sb.toString());
                 sb.delete(0, sb.length());
             }
+        }
 
-        }
-        for(int j=0;j<permutations.size()-1;j++){
-            permutation(permutations.get(j), iterations - 1);
-        }
         System.out.println(permutations);
         return permutations;
     }
 
+    public static ArrayList<String> permutations(String str, int iterations) {
+        ArrayList<String> permutations = new ArrayList<String>();
 
+        return permutations;
+    }
     public static boolean isValidOp(char c) {
         return ((Character.compare(c, '+') == 0) ||
                 (Character.compare(c, '-') == 0) ||
                 (Character.compare(c, '*') == 0) ||
                 (Character.compare(c, '/') == 0));
+    }
+
+    public static boolean isValidNumberedString(String s) {
+        boolean containsOnlyNumbers = true;
+        if(s != null && !s.isEmpty()) {
+            for(char c : s.toCharArray()) {
+                if(!Character.isDigit(c)) {
+                    containsOnlyNumbers = false;
+                }
+            }
+        }
+        return containsOnlyNumbers;
     }
 
 
