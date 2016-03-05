@@ -10,12 +10,40 @@ import java.util.*;
 public class Driver {
     public static void main(String[] args) {
         //f("123", 2);
-        ArrayList<String> temp = permutation("1234+5");
-        for(int i=0; i<temp.size(); i++){
-            System.out.println(temp.get(i));
-        }
+//        ArrayList<String> temp = permutation("1234+5");
+//        for(int i=0; i<temp.size(); i++){
+//            System.out.println(temp.get(i));
+//        }
         //f("123+", 23);
+
+        allValuePermutations("123");
     }
+
+    public static ArrayList<String> allValuePermutations(String input) {
+        System.out.println(p(input, 1));
+        return p(input, 1);
+    }
+
+    public static ArrayList<String> p(String input, int offset) {
+        ArrayList<String> all = new ArrayList<>();
+        if(offset < input.length()){
+            StringBuilder sb1 = new StringBuilder();
+            StringBuilder sb2 = new StringBuilder();
+            sb1.append(input);
+            sb2.append(input);
+
+            ArrayList<String> a = p(input, offset + 1);
+            ArrayList<String> b = p(sb1.insert(offset, "+").toString(), offset+2);
+            ArrayList<String> c = p(sb2.insert(offset, "-").toString(), offset+2);
+            all.addAll(a);
+            all.addAll(b);
+            all.addAll(c);
+            all.add(sb1.toString());
+            all.add(sb2.toString());
+        }
+        return all;
+    }
+
 
     public static Integer[] getDigits(int num) {
         List<Integer> digits = new ArrayList<Integer>();
