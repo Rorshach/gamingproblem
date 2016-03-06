@@ -120,6 +120,16 @@ public class Driver {
 
     public static ArrayList<String> permutations(String str, int iterations) {
         ArrayList<String> permutations = new ArrayList<String>();
+        StringBuffer sb = new StringBuffer();
+
+        if(str.length() == 1) {
+            permutations.add(str);
+            return permutations;
+        } else {
+            for(int i=0; i<str.length(); i++) {
+
+            }
+        }
 
         return permutations;
     }
