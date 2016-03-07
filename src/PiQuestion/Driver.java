@@ -16,6 +16,7 @@ public class Driver {
 //            System.out.println(temp.get(i));
 //        }
         //f("123+", 23);
+        f2("1234", 10);
 
         ArrayList<String> permutations = allValuePermutations("123");
     }
@@ -94,6 +95,7 @@ public class Driver {
     }
 
     //Ex. given 12+3/4+6, allOrderedPermutations will output (12+3)/4+6, 12+(3/4)+6, 12+3/(4+6), (12+3)/(4+6)
+    // Note: Don't need brackets around division and multiplication.
     public static ArrayList<String> allOrderedPermutations(ArrayList<String> permutations) {
         ArrayList<Integer> integers = new ArrayList<Integer>();
         ArrayList<Character> ops = new ArrayList<Character>();
@@ -157,6 +159,32 @@ public class Driver {
             }
         }
         return containsOnlyNumbers;
+    }
+
+    //http://stackoverflow.com/questions/32594710/generate-all-combinations-of-mathematical-expressions-that-add-to-target-java-h
+    //Credits to Stefan Haustein
+    public static void check(double sum, double previous, String digits, double target, String expr) {
+        if (digits.length() == 0) {
+            if (sum + previous == target) {
+                System.out.println(expr + " = " + target);
+            }
+        } else {
+            for (int i = 1; i <= digits.length(); i++) {
+                double current = Double.parseDouble(digits.substring(0, i));
+                String remaining = digits.substring(i);
+                check(sum + previous, current, remaining, target, expr + " + " + current);
+                check(sum, previous * current, remaining, target, expr + " * " + current);
+                check(sum, previous / current, remaining, target, expr + " / " + current);
+                check(sum + previous, -current, remaining, target, expr + " - " + current);
+            }
+        }
+    }
+
+    public static void f2(String digits, double target) {
+        for (int i = 1; i <= digits.length(); i++) {
+            String current = digits.substring(0, i);
+            check(0, Double.parseDouble(current), digits.substring(i), target, current);
+        }
     }
 
 
