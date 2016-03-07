@@ -2,6 +2,7 @@ package PiQuestion;
 
 import com.sun.xml.internal.fastinfoset.util.StringArray;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 /**
@@ -16,30 +17,46 @@ public class Driver {
 //        }
         //f("123+", 23);
 
-        allValuePermutations("123");
+        ArrayList<String> permutations = allValuePermutations("123");
     }
 
     public static ArrayList<String> allValuePermutations(String input) {
-        System.out.println(p(input, 1));
+        //System.out.println(p(input, 1));
         return p(input, 1);
     }
 
+
+    //Refactor repeated code.
     public static ArrayList<String> p(String input, int offset) {
         ArrayList<String> all = new ArrayList<>();
         if(offset < input.length()){
             StringBuilder sb1 = new StringBuilder();
             StringBuilder sb2 = new StringBuilder();
+            StringBuilder sb3 = new StringBuilder();
+            StringBuilder sb4 = new StringBuilder();
+
             sb1.append(input);
             sb2.append(input);
+            sb3.append(input);
+            sb4.append(input);
 
             ArrayList<String> a = p(input, offset + 1);
             ArrayList<String> b = p(sb1.insert(offset, "+").toString(), offset+2);
             ArrayList<String> c = p(sb2.insert(offset, "-").toString(), offset+2);
+            ArrayList<String> d = p(sb3.insert(offset, "*").toString(), offset+2);
+            ArrayList<String> e = p(sb4.insert(offset, "/").toString(), offset+2);
+
             all.addAll(a);
             all.addAll(b);
             all.addAll(c);
+            all.addAll(d);
+            all.addAll(e);
+
             all.add(sb1.toString());
             all.add(sb2.toString());
+            all.add(sb3.toString());
+            all.add(sb4.toString());
+
         }
         return all;
     }
@@ -60,106 +77,68 @@ public class Driver {
 
 
     public static void f(String listNum, int target) throws IllegalArgumentException {
-//        ArrayList<String> listSubstrings = getListSubstrings(listNum);
 
         if(!isValidNumberedString(listNum)) {
             throw new IllegalArgumentException();
         }
 
-        int val = Integer.parseInt(listNum);
-        Integer[] digits = getDigits(val);
-        //test
-        System.out.println(Arrays.toString(digits));
+        ArrayList<String> allPermutations = allValuePermutations(listNum);
+        ArrayList<String> allOrderedPermutations = allOrderedPermutations(allPermutations);
+        ArrayList<String> validPermutation = allValidPermutations(allOrderedPermutations, target);
 
-        int index = 0;
-        while(index < digits.length - 1) {
-            StringBuffer sb = new StringBuffer();
-            int index2 = index + 1;
-            while(index2 < digits.length) {
-                if ((digits[index] + digits[index2]) < target) {
-
-                }
-            }
+        int j=0;
+        while(j<validPermutation.size()){
+            System.out.println(validPermutation.get(j));
+            j++;
         }
-
-
-        String solutionString = "";
     }
 
-    public static ArrayList<String> getListSubstrings(String listNum) {
-        ArrayList<String> stringArr = new ArrayList<String>();
+    //Ex. given 12+3/4+6, allOrderedPermutations will output (12+3)/4+6, 12+(3/4)+6, 12+3/(4+6), (12+3)/(4+6)
+    public static ArrayList<String> allOrderedPermutations(ArrayList<String> permutations) {
+        ArrayList<Integer> integers = new ArrayList<Integer>();
+        ArrayList<Character> ops = new ArrayList<Character>();
 
-        ArrayList<String> tempStringArr = new ArrayList<String>();
-        for(int i=0; i<listNum.length(); i++) {
-
-//            StringBuffer sb = new StringBuffer();
-            String firstPart = listNum.substring(0,i);
-            tempStringArr.add(firstPart);
-            for (int j=1; j<=listNum.length()-1-i; j++){
-
-
+        int x = -1;
+        int y;
+        char op;
+        StringBuilder sb = new StringBuilder();
+        String s = permutations.get(0); //TEMPORARY
+        //Get the list of integers and ops from the permutation string
+        for(int i=0; i<s.length(); i++){
+            if(Character.isDigit(s.charAt(i))){
+                sb.append(s.charAt(i));
+            } else {
+                ops.add(s.charAt(i));
+                int integer = Integer.valueOf(sb.toString());
+                integers.add(integer);
+                sb.delete(0, sb.length()-1);
             }
         }
-        return tempStringArr;
 
+        //Create permutations of order of operations and calculate each. If that permuations is valid, return it
+
+        //return(calculate(1,2,'+') == target);
+        return permutations; //TEMP
     }
 
-    // Permutations should be made by ops being inserted in the str. opcount is str.length()-1
-    // permutation first half and permutation second half. first half opcount + second half opcount = total opcount
-
-    public static ArrayList<String> permutation(String str) {
-        int len = str.length();
-        ArrayList<String> permutations = new ArrayList<String>();
-
-        Deque<String> stack = new ArrayDeque<String>();
-        StringBuffer sb = new StringBuffer();
-
-
-        if (len == 1){
-            permutations.add(sb.toString());
-            sb.delete(0, sb.length());
-        } else {
-            int charCount = 1;
-            int opPos = 0;
-
-            int opID = 0;
-
-            while(charCount < len) {
-                for(int i=0; i < len; i++) {    //check that opID is not 5
-                    sb.append(str.charAt(i));
-
-                    if(isValidOp(str.charAt(i))) {
-
-                    } else if((opPos == i) && !isValidOp(str.charAt(i)) && !isValidOp(str.charAt(i+1))) { //check if op is available
-                        sb.append("+"); //push opID 1 to 4
-                    }
-                }
-                opPos++;
-                charCount++;
-
-                permutations.add(sb.toString());
-                sb.delete(0, sb.length());
-            }
-        }
-
-        System.out.println(permutations);
-        return permutations;
+    public static ArrayList<String> allValidPermutations(ArrayList<String> orderedPermutations, int target) {
+        //calculate and check if valid
+        return orderedPermutations;
     }
 
-    public static ArrayList<String> permutations(String str, int iterations) {
-        ArrayList<String> permutations = new ArrayList<String>();
-        StringBuffer sb = new StringBuffer();
 
-        if(str.length() == 1) {
-            permutations.add(str);
-            return permutations;
-        } else {
-            for(int i=0; i<str.length(); i++) {
-
-            }
+    //calculate functions goes from left to right. The order of operations should be specified before.
+    public static int calculate(int x, int y, char op) throws IllegalArgumentException{
+        if(!isValidOp(op)) {
+            throw new IllegalArgumentException();
         }
-
-        return permutations;
+        switch(Character.toString(op)){
+            case "+": return x + y;
+            case "-": return x - y;
+            case "*": return x * y;
+            case "/": if(x%y == 0) { return x / y;}
+            default: throw new IllegalArgumentException();
+        }
     }
     public static boolean isValidOp(char c) {
         return ((Character.compare(c, '+') == 0) ||
